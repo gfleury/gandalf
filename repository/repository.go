@@ -174,7 +174,7 @@ func Remove(name string) error {
 	}
 
 	// TODO: Check response
-	if _, err := Client.DefaultApi.DeleteRepository("INFRA", name, name); err != nil {
+	if _, err := Client.DefaultApi.DeleteRepository(name, name); err != nil {
 		if err == mgo.ErrNotFound {
 			return ErrRepositoryNotFound
 		}
@@ -547,12 +547,12 @@ func (*BitBucketContentRetriever) GetLogs(repo, hash string, total int, path str
 		commit.CreatedAt = time.Unix(bitbucketcommit.CommitterTimestamp, 0).String()
 		commit.Committer = &GitUser{
 			Name:  bitbucketcommit.Committer.Name,
-			Email: bitbucketcommit.Committer.EmailAddress,
+			Email: bitbucketcommit.Committer.Email,
 			Date:  time.Unix(bitbucketcommit.CommitterTimestamp, 0).String(),
 		}
 		commit.Author = &GitUser{
 			Name:  bitbucketcommit.Author.Name,
-			Email: bitbucketcommit.Author.EmailAddress,
+			Email: bitbucketcommit.Author.Email,
 			Date:  time.Unix(bitbucketcommit.AuthorTimestamp, 0).String(),
 		}
 		if len(bitbucketcommit.Parents) > 0 {
