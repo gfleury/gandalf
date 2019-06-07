@@ -5,9 +5,13 @@
 package user
 
 import (
+	"context"
 	"errors"
 	"regexp"
+	"strings"
 
+	"github.com/globalsign/mgo"
+	"github.com/tsuru/gandalf/bitbucketapi"
 	"github.com/tsuru/tsuru/log"
 )
 
@@ -26,7 +30,21 @@ type User struct {
 //
 // The authorized_keys file belongs to the user running the process.
 func New(name string, keys map[string]string) (*User, error) {
-	//TODO
+
+	client, err := bitbucketapi.Client(context.Background())
+	if err != nil {
+		return nil, err
+	}
+
+	bbname := strings.Split(name, "@")[0]
+	_, err = client.DefaultApi.GetUser(bbname)
+	if err != nil {
+		if mgo.IsDup(err) {
+			return nil, ErrDuplicateKey
+		}
+		return nil, err
+	}
+
 	log.Debugf(`Creating user "%s"`, name)
 	u := &User{Name: name}
 	return u, nil

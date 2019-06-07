@@ -8,6 +8,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"strings"
 	"time"
 
 	bitbucketv1 "github.com/gfleury/go-bitbucket-v1"
@@ -93,6 +94,8 @@ func ListKeys(uName string) (KeyList, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	uName = strings.Split(uName, "@")[0]
 
 	response, err := client.DefaultApi.GetSSHKeys(uName)
 	keys, err := bitbucketv1.GetSSHKeysResponse(response)
